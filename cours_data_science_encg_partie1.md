@@ -201,6 +201,12 @@ print(f"Q2 (50% - Médiane): {colonne.quantile(0.50):.2f}")
 print(f"Q3 (75%): {colonne.quantile(0.75):.2f}")
 print(f"IQR: {colonne.quantile(0.75) - colonne.quantile(0.25):.2f}")
 ```
+Country Name	Country Code	Year	Value
+0	Afghanistan	AFG	2000	3.521418e+09
+1	Afghanistan	AFG	2001	2.813572e+09
+2	Afghanistan	AFG	2002	3.825701e+09
+3	Afghanistan	AFG	2003	4.520947e+09
+4	Afghanistan	AFG	2004	5.224897e+09
 
 ### 2.2 Visualisation des Statistiques Descriptives
 
