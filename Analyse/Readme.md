@@ -49,6 +49,10 @@ Dans le graphique “Linear Regression: Actual vs. Predicted Sales Volume”, ch
 Le nuage de points montre une tendance globale croissante : lorsque les ventes réelles augmentent, les ventes prédites augmentent également, ce qui indique que le modèle capte une partie de la relation entre les variables explicatives et le volume vendu.  
 Cependant, les points sont souvent éloignés de la diagonale et forment visiblement deux “bandes” ou groupes, ce qui suggère des erreurs systématiques pour certains segments (types de produits ou conditions de vente) et la présence possible d’effets non linéaires ou de variables manquantes que le modèle linéaire simple ne parvient pas à représenter.  
 
+## Graphique – Régression linéaire
+
+![Régression linéaire](regression_lineaire.png)
+
 ---
 
 ## Régression logistique : probabilité de fortes ventes
@@ -58,6 +62,11 @@ Le modèle ne fournit pas un volume de ventes, mais une probabilité comprise en
 
 Dans le graphique “Logistic Regression: Predicted Probability of High Sales vs. Price”, les points bleus et verts représentent les observations réelles (0 = faibles ventes, 1 = fortes ventes) le long de l’axe des prix, tandis que la courbe rouge montre la probabilité prédite de fortes ventes en fonction du prix.  
 La courbe est décroissante : plus le prix augmente, plus la probabilité de fortes ventes diminue, ce qui traduit une sensibilité négative de la demande au prix ; cette visualisation permet ainsi d’identifier les niveaux de prix où la probabilité d’obtenir de “High Sales” devient très faible et d’orienter les décisions de tarification.  
+
+## Graphique – Régression logistique
+
+![Régression logistique](regression_logistique.png)
+
 
 ---
 
