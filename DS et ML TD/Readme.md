@@ -23,4 +23,5 @@ Les variables explicatives retenues sont :
 - Year of Study (année d’étude)  
 - CGPA (moyenne générale)  
 - Marital Status (statut marital)  
+
 Ces variables servent d’entrées au modèle de classification pour prédire la présence d’au moins un trouble mental.
