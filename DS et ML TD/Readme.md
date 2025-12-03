@@ -58,20 +58,22 @@ Ses hyperparamètres (par exemple le nombre d’arbres et la profondeur maximale
 ### 1. Synthèse de l’analyse exploratoire (EDA)
 
 L’histogramme de la distribution de l’âge montre deux groupes principaux d’étudiants, autour de 18–19 ans et de 23–24 ans, avec très peu d’observations entre 21 et 22 ans.  
-*Insérer ici l’image : Distribution de l’âge.*
+![Distribution de l’âge](images/age_distribution.png)
 
 Le graphique de répartition des catégories de CGPA indique que la plupart des étudiants se situent dans les tranches élevées (3.00–3.49 et 3.50–4.00), tandis que les catégories de CGPA plus faibles sont beaucoup moins représentées.  
-*Insérer ici l’image : Répartition des catégories de CGPA.*
+![Répartition des catégories de CGPA](images/cgpa_distribution.png)
 
 La répartition de la variable `mental_issue` montre qu’il y a plus d’étudiants qui déclarent au moins un trouble mental que d’étudiants sans trouble, ce qui confirme que les problèmes de santé mentale sont fréquents dans cet échantillon.  
-*Insérer ici l’image : Présence d’au moins un trouble mental (0/1).*
+![Présence d’au moins un trouble mental](images/mental_issue_dist.png)
 
 Les graphiques “trouble mental selon le genre” et “trouble mental selon l’année d’étude” suggèrent que les troubles sont présents dans les deux genres et à différents niveaux d’étude, avec parfois un nombre plus élevé de cas déclarés chez les étudiantes ou dans certaines années.  
-*Insérer ici : Trouble mental selon le genre.*  
-*Insérer ici : Trouble mental selon l’année d’étude.*
+
+![Trouble mental selon le genre](images/mental_issue_gender.png)
+![Trouble mental selon l'année d'étude](images/mental_issue_year.png)
 
 Enfin, les heatmaps de corrélation (entre l’âge ou le CGPA numérique et `mental_issue`) montrent des corrélations faibles, ce qui laisse penser qu’aucune de ces variables numériques ne suffit à elle seule pour expliquer la présence d’un trouble mental.  
-*Insérer ici : Heatmap âge vs mental_issue et/ou CGPA_num vs mental_issue.*
+![Heatmap Age / trouble mental](images/heatmap_age_mental.png)
+![Heatmap CGPA / trouble mental](images/heatmap_cgpa_mental.png)
 
 ### 2. Performances des modèles de classification
 
@@ -79,10 +81,10 @@ Trois modèles de classification ont été entraînés sur la variable cible `me
 Pour chacun, une validation croisée (k‑fold) a été utilisée sur l’ensemble d’entraînement afin de calculer une accuracy moyenne plus stable. Les résultats obtenus montrent que la Random Forest est le modèle le plus performant, avec une accuracy d’environ **XX %** et un F1‑score de **YY** sur le jeu de test (valeurs à compléter depuis le notebook). Les modèles de régression logistique et KNN obtiennent des scores légèrement inférieurs, ce qui confirme que la Random Forest s’adapte mieux à la structure des données.
 
 La matrice de confusion de la Random Forest permet d’analyser les erreurs plus en détail. On observe que la plupart des étudiants avec trouble mental (classe 1) sont correctement prédits, mais que le modèle a tendance à prédire un trouble mental pour certains étudiants qui n’en déclarent pas (faux positifs). Cela signifie que le modèle privilégie la détection des cas à risque, quitte à “sur‑détecter” quelques étudiants sans trouble.  
-*Insérer ici l’image : Matrice de confusion – Random Forest.*
+![Matrice de confusion Random Forest](images/confusion_rf.png)
 
 Concernant la courbe ROC, la diagonale en pointillés correspond à un classifieur aléatoire. La courbe bleue se situe au‑dessus de cette diagonale, avec une AUC de 0,60 : le modèle fait mieux que le hasard, mais sa performance reste modérée, ce qui s’explique notamment par la petite taille du dataset et le faible nombre de variables.
-*Insérer ici, si tu l’as, l’image : Courbe ROC du meilleur modèle.*
+![Courbe ROC du meilleur modèle](images/roc_best_model.png)
 
 ## Conclusion
 
