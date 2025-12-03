@@ -58,7 +58,7 @@ Ses hyperparamètres (par exemple le nombre d’arbres et la profondeur maximale
 ### 1. Synthèse de l’analyse exploratoire (EDA)
 
 L’histogramme de la distribution de l’âge montre deux groupes principaux d’étudiants, autour de 18–19 ans et de 23–24 ans, avec très peu d’observations entre 21 et 22 ans.  
-![Distribution de l’âge](DS%20et%20ML%20TD/images/age_distribution.png)
+![Distribution de l’âge](DS%20et%20ML%20TD/age_distribution.PNG)
 
 Le graphique de répartition des catégories de CGPA indique que la plupart des étudiants se situent dans les tranches élevées (3.00–3.49 et 3.50–4.00), tandis que les catégories de CGPA plus faibles sont beaucoup moins représentées.  
 ![Répartition des catégories de CGPA](DS%20et%20ML%20TD/images/cgpa_distribution.png)
