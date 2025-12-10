@@ -47,7 +47,3 @@ Nous utilisons le **Heart Disease Dataset – Cleveland** issu de l’UCI Machin
     - `0` : pas de maladie (classe saine).  
     - `1` : maladie présente (regroupement des valeurs 1, 2, 3, 4).
 
-En résumé, le projet peut être formulé ainsi :
-
-> **Mission :** prédire automatiquement, à partir des caractéristiques cliniques (X), si un patient présente ou non une maladie cardiaque significative (y binaire), en optimisant notamment le **Recall** pour limiter au maximum les Faux Négatifs (patients malades classés comme sains).
-
