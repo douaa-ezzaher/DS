@@ -27,18 +27,18 @@ Ce jeu de données provient d'un questionnaire Google Forms rempli par des étud
     * `1` = **Pas à risque** (santé mentale stable, bonnes performances) [web:2][web:6][web:11]
 
 
- ## 2. Le Code Python (Laboratoire)
+## 2. Le Code Python (Laboratoire)
  
-# 📥 Import du dataset Kaggle (Student Mental Health)
+### 📥 Import du dataset Kaggle (Student Mental Health)
 
-# Utilisé pour pouvoir importer les data sources de Kaggle
+*Utilisé pour pouvoir importer les data sources de Kaggle*
 import kagglehub
 
 shariful07_student_mental_health_path = kagglehub.dataset_download("shariful07/student-mental-health")
 print("Data source import complete.")
 
 
-# 📥 Chargement du dataset
+### 📥 Chargement du dataset
 
 import kagglehub
 import pandas as pd
@@ -52,11 +52,11 @@ print(df.shape)
 df.head()
 
 
-# 🧹 Pré-traitement
+### 🧹 Pré-traitement
 
 data = df.copy()
 
-# Nettoyage des noms de colonnes
+*Nettoyage des noms de colonnes*
 data.columns = (
     data.columns
     .str.strip()
@@ -65,7 +65,7 @@ data.columns = (
     .str.replace("?", "")
 )
 
-# Création de la target nommée mentalissue : 1 = au moins un trouble mental, 0 = aucun
+##" Création de la target nommée mentalissue : 1 = au moins un trouble mental, 0 = aucun
 data["mentalissue"] = (
     (data["doyouhavedepression"] == "Yes") |
     (data["doyouhaveanxiety"] == "Yes") |
@@ -75,11 +75,11 @@ data["mentalissue"] = (
 print(data["mentalissue"].value_counts())
 
 
-# 🔁 Suppression des lignes dupliquées
+### 🔁 Suppression des lignes dupliquées
 
 data = data.drop_duplicates()
 
-# Variables explicatives
+*Variables explicatives*
 features = [
     "chooseyourgender",
     "age",
@@ -93,14 +93,14 @@ X = data[features].copy()
 y = data["mentalissue"]
 
 
-# 🧩 Vérifier les NA (données manquantes)
+### 🧩 Vérifier les NA (données manquantes)
 
 print(X.isna().sum())
 
-# 1. Numérique seulement : age
+*1. Numérique seulement : age*
 X["age"] = X["age"].fillna(X["age"].median())
 
-# 2. Toutes les autres colonnes catégorielles : mode
+*2. Toutes les autres colonnes catégorielles : mode*
 for col in [
     "chooseyourgender",
     "whatisyourcourse",
@@ -111,15 +111,15 @@ for col in [
     X[col] = X[col].fillna(X[col].mode())
 
 
-# 🔢 Encodage et Standardisation
+### 🔢 Encodage et Standardisation
 
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
-# One-Hot Encoding des catégorielles
+*One-Hot Encoding des catégorielles*
 X_encoded = pd.get_dummies(X, drop_first=True)
 
-# Standardisation seulement de la colonne age
+*Standardisation seulement de la colonne age*
 scaler = StandardScaler()
 X_encoded["age"] = scaler.fit_transform(X_encoded[["age"]])
 
@@ -127,12 +127,12 @@ print(X_encoded.shape)
 X_encoded.head()
 
 
-# 📊 Visualisation : histogramme de l'âge, CGPA, statut marital
+### 📊 Visualisation : histogramme de l'âge, CGPA, statut marital
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Histogramme de l'âge
+*Histogramme de l'âge*
 plt.figure(figsize=(5, 4))
 sns.histplot(data["age"], kde=True)
 plt.title("Distribution de l'âge")
@@ -140,7 +140,7 @@ plt.xlabel("Âge")
 plt.ylabel("Effectif")
 plt.show()
 
-# Graphe du CGPA
+*Graphe du CGPA*
 plt.figure(figsize=(6, 4))
 sns.countplot(x=data["whatisyourcgpa"])
 plt.xticks(rotation=45)
@@ -149,7 +149,7 @@ plt.xlabel("CGPA")
 plt.ylabel("Effectif")
 plt.show()
 
-# Graphe du statut marital
+*Graphe du statut marital*
 plt.figure(figsize=(6, 4))
 sns.countplot(x=data["maritalstatus"])
 plt.xticks(rotation=30)
@@ -159,7 +159,7 @@ plt.ylabel("Effectif")
 plt.show()
 
 
-# ✂️ Split train / test
+### ✂️ Split train / test
 
 from sklearn.model_selection import train_test_split
 
@@ -170,7 +170,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 X_train.shape, X_test.shape
 
 
-# 🤖 Entraînement de plusieurs modèles de base
+### 🤖 Entraînement de plusieurs modèles de base
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -188,7 +188,7 @@ for name, model in models.items():
     print(f"{name} - Accuracy moyenne CV : {scores.mean():.3f}")
 
 
-# 🔍 GridSearch sur RandomForest + évaluation
+### 🔍 GridSearch sur RandomForest + évaluation
 
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report, confusion_matrix
@@ -228,11 +228,11 @@ plt.title("Matrice de confusion - RandomForest")
 plt.show()
 
 
-# 📈 Courbe ROC – AUC
+### 📈 Courbe ROC – AUC
 
 from sklearn.metrics import roc_curve, roc_auc_score
 
-# Probabilités pour la classe 1 (au moins un trouble mental)
+*Probabilités pour la classe 1 (au moins un trouble mental)*
 y_proba = best_model.predict_proba(X_test)[:, 1]
 
 fpr, tpr, thresholds = roc_curve(y_test, y_proba)
