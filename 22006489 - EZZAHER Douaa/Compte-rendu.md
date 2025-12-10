@@ -1,49 +1,29 @@
-# 📘 GRAND GUIDE : ANATOMIE D'UN PROJET DATA SCIENCE – HEART DISEASE (UCI)
+# 📘 GRAND GUIDE : ANATOMIE D'UN PROJET DATA SCIENCE
 ## EZZAHER Douaa - S7 - CAC G2
 ---
 
 ## 1. Le Contexte Métier et la Mission
 
 ### Le Problème (Business Case)
+Dans le domaine universitaire, la pression académique, les difficultés financières et l'isolement social peuvent fortement impacter la santé mentale des étudiants et, par ricochet, leurs performances académiques. [web:2][web:9]
 
-Les maladies cardiovasculaires sont l’une des premières causes de mortalité dans le monde, et le diagnostic précoce repose sur de nombreux facteurs cliniques (âge, tension artérielle, cholestérol, douleur thoracique, etc.) difficiles à interpréter ensemble.  
-Un médecin doit combiner ces informations pour décider si un patient présente une maladie coronarienne significative (rétrécissement des artères coronaires) ou non.
+**Objectif :** Construire un modèle de type "Assistant IA" capable d'identifier les étudiants à risque de mauvaise santé mentale ou de chute de performance académique, à partir de leurs réponses à un questionnaire. [web:2][web:6]
 
-- **Objectif :** Construire un modèle de Machine Learning qui aide à prédire la présence de maladie cardiaque à partir de données cliniques simples (données de consultation et examens de base).
-- **Enjeu critique :** Le coût des erreurs est très asymétrique.
-  - Dire à un patient sain qu’il est malade (**Faux Positif**) entraîne du stress, des examens invasifs (comme la coronarographie) et des coûts inutiles.
-  - Dire à un patient malade qu’il est sain (**Faux Négatif**) peut conduire à un infarctus non prévenu, des séquelles graves, voire la mort.
+**L'Enjeu critique :** Les coûts des erreurs de classification sont asymétriques.
+*   Classer un étudiant en difficulté comme "sans problème" (**Faux Négatif**) peut conduire à un non-suivi, une aggravation des symptômes (anxiété, dépression) et un échec académique. [web:2][web:6]
+*   Classer un étudiant sans difficulté majeure comme "à risque" (**Faux Positif**) peut générer une sur-sollicitation des services de soutien et une stigmatisation inutile, mais reste généralement moins grave qu'un Faux Négatif. [web:2][web:11]
 
-Dans ce contexte, **le modèle doit prioriser la sensibilité (Recall)** : mieux vaut détecter le maximum de patients réellement malades, quitte à accepter un certain nombre de faux positifs, surtout si le modèle est utilisé comme système d’alerte précoce ou de “second avis” pour le clinicien.
+**L'IA doit donc prioriser la sensibilité (Recall)** pour capter un maximum d'étudiants réellement en difficulté, tout en gardant une précision acceptable pour ne pas saturer les dispositifs de soutien. [web:11]
 
-### Les Données (L’Input)
+### Les Données (L'Input)
+Nous utilisons le dataset **"Student Mental health"** publié sur Kaggle par **MD Shariful**. [web:2][web:17]
+Ce jeu de données provient d'un questionnaire Google Forms rempli par des étudiants d'université, visant à analyser leur situation académique actuelle et leur santé mentale. [web:2][web:9]
 
-Nous utilisons le **Heart Disease Dataset – Cleveland** issu de l’UCI Machine Learning Repository.
+*   **X (Features) :** Variables issues d'un questionnaire couvrant :
+    * Informations démographiques (sexe, âge, niveau d'étude, université). [web:2][web:9]
+    * Facteurs académiques (charge de travail, difficultés perçues, heures d'étude, CGPA/GPA). [web:2][web:3]
+    * Indicateurs de santé mentale et mode de vie (stress académique, qualité du sommeil, anxiété, symptômes de dépression, soutien social, etc.). [web:2][web:6]
 
-- **X (Features)** :  
-  13–14 variables cliniques et démographiques, par exemple :
-
-  - `age` : âge du patient en années.  
-  - `sex` : sexe (1 = homme, 0 = femme).  
-  - `cp` : type de douleur thoracique (angine typique, angine atypique, douleur non angineuse, asymptomatique).  
-  - `trestbps` : tension artérielle au repos (en mm Hg).  
-  - `chol` : cholestérol sérique (mg/dl).  
-  - `fbs` : glycémie à jeun > 120 mg/dl (1 = vrai, 0 = faux).  
-  - `restecg` : résultat de l’ECG au repos (normal, anomalies ST-T, hypertrophie ventriculaire).  
-  - `thalach` : fréquence cardiaque maximale atteinte.  
-  - `exang` : angine (douleur) induite par l’effort (1 = oui, 0 = non).  
-  - `oldpeak` : dépression du segment ST induite par l’effort par rapport au repos.  
-  - `slope` : pente du segment ST au pic d’effort (ascendante, plate, descendante).  
-  - `ca` : nombre de vaisseaux majeurs (0–3) colorés par fluoroscopie.  
-  - `thal` : résultat du test au thallium (normal, défaut fixe, défaut réversible).
-
-  Ce sont des **données tabulaires structurées** (valeurs numériques et catégorielles), pas des images ni des signaux bruts. Elles se prêtent bien à des modèles de classification supervisée “classiques” (logistic regression, arbres de décision, random forest, etc.).
-
-- **y (Target)** :  
-  - Variable `num` : diagnostic de maladie cardiaque mesuré par angiographie, codé de 0 à 4.  
-    - `0` = aucune maladie coronarienne significative.  
-    - `1`, `2`, `3`, `4` = présence et sévérité croissante de la maladie.  
-  - Dans la plupart des projets de Machine Learning, on convertit cela en **problème binaire** :
-    - `0` : pas de maladie (classe saine).  
-    - `1` : maladie présente (regroupement des valeurs 1, 2, 3, 4).
-
+*   **y (Target) :** Binaire (selon formulation du problème).
+    * `0` = **À risque** (stress élevé, dépression, faible performance académique)
+    * `1` = **Pas à risque** (santé mentale stable, bonnes performances) [web:2][web:6][web:11]
