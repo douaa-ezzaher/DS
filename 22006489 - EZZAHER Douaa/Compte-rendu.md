@@ -1,6 +1,7 @@
 # 📘 GRAND GUIDE : ANATOMIE D'UN PROJET DATA SCIENCE
 ## EZZAHER Douaa - S7 - CAC G2
 ---
+## 1. Le Contexte Métier et la Mission
 ### Le Problème (Business Case)
 Dans le domaine universitaire, la pression académique, les difficultés financières et l'isolement social peuvent fortement impacter la santé mentale des étudiants et, par ricochet, leurs performances académiques. [web:2][web:9]
 
@@ -24,3 +25,7 @@ Ce jeu de données provient d'un questionnaire Google Forms rempli par des étud
 *   **y (Target) :** Binaire (selon formulation du problème).
     * `0` = **À risque** (stress élevé, dépression, faible performance académique)
     * `1` = **Pas à risque** (santé mentale stable, bonnes performances) [web:2][web:6][web:11]
+
+
+ ## 2. Le Code Python (Laboratoire)
+ 
