@@ -372,11 +372,11 @@ Comme les classes peuvent être modérément déséquilibrées (répartition mal
 On surveille donc en priorité :  
 
 1. **Précision (Precision)**  
-   \(\text{Precision} = \frac{TP}{TP + FP}\)  
+   \(\text{Precision} = \frac{TP}{TP + FP}\)
    Elle mesure la proportion de patients prédits “malades” qui le sont réellement ; une précision faible signifie trop de fausses alertes pour les cardiologues.  
 
 2. **Rappel (Recall / Sensibilité)**  
-   \(\text{Recall} = \frac{TP}{TP + FN}\)  
+   \(\text{Recall} = \frac{TP}{TP + FN}\)   
    Elle indique la capacité du modèle à détecter réellement les patients cardiaques ; un rappel faible signifie qu’on laisse passer trop de malades non détectés, ce qui est médicalement inacceptable.  
 
 3. **F1-Score**  
