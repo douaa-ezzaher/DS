@@ -1,9 +1,6 @@
 # 📘 GRAND GUIDE : ANATOMIE D'UN PROJET DATA SCIENCE
 ## EZZAHER Douaa - S7 - CAC G2
 ---
-
-## 1. Le Contexte Métier et la Mission
-
 ### Le Problème (Business Case)
 Dans le domaine universitaire, la pression académique, les difficultés financières et l'isolement social peuvent fortement impacter la santé mentale des étudiants et, par ricochet, leurs performances académiques. [web:2][web:9]
 
