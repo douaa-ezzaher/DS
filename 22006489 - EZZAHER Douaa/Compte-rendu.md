@@ -249,4 +249,137 @@ plt.legend()
 plt.show()
 
 
+## 3. Analyse Approfondie : Nettoyage (Data Wrangling)
 
+### Le Problème Mathématique du "Vide"
+
+Dans la base Heart Disease, certaines variables contiennent des valeurs manquantes (souvent encodées par `?`), notamment pour des colonnes comme `ca` ou `thal` dans certaines versions du dataset.  
+Les algorithmes de machine learning basés sur l’algèbre linéaire (régression, SVM, réseaux, calculs de distances) ne peuvent pas traiter ces `NaN` et échouent dès qu’une seule valeur manquante apparaît dans la matrice de features.  
+
+### La Mécanique de l’Imputation
+
+Une stratégie simple consiste à remplacer les valeurs manquantes par une statistique calculée sur la colonne (moyenne, médiane ou mode), par exemple via `SimpleImputer`.  
+
+1. **L’Apprentissage (`fit`) :**  
+   L’imputer parcourt une colonne numérique comme `trestbps` (pression artérielle au repos) ou `chol` (cholestérol sérique) et calcule une statistique, par exemple la moyenne \(\mu\) de tous les patients observés.  
+   Cette valeur (par exemple 132 mmHg pour `trestbps`) est mémorisée comme “valeur de remplacement” pour cette variable.  
+
+2. **La Transformation (`transform`) :**  
+   L’imputer repasse ensuite sur la colonne ; dès qu’il rencontre une valeur manquante, il la remplace par \(\mu\).  
+   On obtient alors une matrice sans trous, compatible avec les algorithmes de classification comme la régression logistique ou Random Forest.  
+
+### 💡 Le Coin de l’Expert (Data Leakage)
+
+Dans un script pédagogique, on nettoie souvent les données **avant** de faire le split Train/Test, ce qui est plus simple mais théoriquement imparfait.  
+En calculant la moyenne de `trestbps` ou `chol` sur tout le dataset, on utilise aussi les patients qui finiront dans le Test Set, ce qui introduit une **fuite d’information (Data Leakage)**.  
+
+- **Pourquoi c’est un problème ?**  
+  Les statistiques calculées sur tout le jeu de données incorporent des informations “du futur” (Test), ce qui peut rendre les performances du modèle trop optimistes.  
+
+- **Bonne pratique en production :**  
+  - Séparer d’abord en Train/Test.  
+  - Ajuster l’imputer (`fit`) uniquement sur le Train.  
+  - Appliquer ensuite cette imputation (`transform`) au Train **et** au Test avec les valeurs apprises sur le Train.  
+
+---
+
+## 4. Analyse Approfondie : Exploration (EDA)
+
+C’est l’étape de profilage des patients et des variables cliniques du dataset Heart Disease.  
+
+### Décrypter `.describe()`
+
+L’appel `df[["age","trestbps","chol","thalach","oldpeak"]].describe()` fournit des statistiques descriptives sur des variables clés comme l’âge, la tension au repos, le cholestérol, la fréquence cardiaque maximale atteinte et la dépression ST.  
+Comparer la **Mean** (moyenne) et le **50%** (médiane) permet de repérer les variables asymétriques : par exemple, un cholestérol moyen nettement plus élevé que la médiane indique une distribution tirée vers le haut par quelques hypercholestérolémies extrêmes.  
+
+L’**écart-type (std)** renseigne sur la dispersion ; une variable avec `std` proche de 0 (quasi constante) apporte peu d’information discriminante au modèle et peut être candidate à la suppression ou à la mise de côté.  
+
+### La Multicollinéarité (Redondance Clinique)
+
+En examinant une matrice de corrélation, certaines variables apparaissent fortement corrélées, par exemple des combinaisons de paramètres de stress test comme `oldpeak` et `slope`, ou l’association entre certains marqueurs de risque (pression, cholestérol, fréquence cardiaque maximale).  
+Cette redondance est peu gênante pour des modèles d’arbres (Random Forest, Gradient Boosting), mais peut rendre une régression logistique instable, car le modèle peine à attribuer clairement le “poids” de la décision à l’une ou l’autre variable fortement corrélée.  
+
+---
+
+## 5. Analyse Approfondie : Méthodologie (Split)
+
+### Le Concept : Garantie de Généralisation
+
+L’objectif n’est pas que le modèle mémorise la base Heart Disease, mais qu’il apprenne des règles générales valables pour de nouveaux patients jamais vus.  
+Le découpage en Train/Test permet de simuler ce futur : le Train sert à l’apprentissage, le Test sert uniquement à mesurer la capacité de généralisation du modèle sur des données “neuves”.  
+
+### Les Paramètres sous le capot
+
+Avec `train_test_split(test_size=0.2, random_state=42, stratify=y)` :  
+
+1. **Ratio 80/20 (principe de Pareto) :**  
+   Environ 80 % des patients sont utilisés pour apprendre les relations entre les variables (âge, type de douleur thoracique `cp`, cholestérol `chol`, fréquence cardiaque `thalach`, etc.) et la présence de maladie cardiaque, tandis que 20 % sont réservés pour l’évaluation finale.  
+
+2. **Reproductibilité (`random_state`) :**  
+   Fixer `random_state=42` garantit que toute personne qui relance le notebook obtient exactement les mêmes patients en Train et Test, ce qui est indispensable pour comparer les résultats et valider un pipeline de manière scientifique.  
+
+3. **Stratification (`stratify=y`) :**  
+   La stratification conserve une proportion similaire de patients malades / non malades dans le Train et le Test, ce qui stabilise les métriques d’évaluation et évite des splits déséquilibrés par hasard.  
+
+---
+
+## 6. FOCUS THÉORIQUE : L’Algorithme Random Forest 🌲
+
+Pourquoi Random Forest est-il un “couteau suisse” très apprécié pour la base Heart Disease ?  
+
+### A. La Faiblesse de l’Arbre Unique
+
+Un arbre de décision sur ce dataset peut construire des règles comme : “si `cp` = angine typique et `thalach` < 150 alors malade”, en enchaînant des seuils sur `age`, `chol`, `oldpeak`, etc.  
+Seul, il a tendance à surapprendre des cas particuliers (par exemple un jeune patient très atypique), ce qui se traduit par une **variance élevée** et des performances instables sur de nouveaux patients.  
+
+### B. La Force du Groupe (Bagging)
+
+Random Forest construit de nombreux arbres en introduisant de l’aléa contrôlé.  
+
+1. **Bootstrapping (échantillons patients) :**  
+   Chaque arbre est entraîné sur un sous-ensemble tiré avec remise du jeu d’entraînement : certains patients sont vus plusieurs fois par un arbre, d’autres pas du tout pour cet arbre.  
+   Chaque arbre développe ainsi sa propre “opinion clinique” basée sur une expérience légèrement différente.  
+
+2. **Aléa sur les features (feature randomness) :**  
+   À chaque split, l’arbre ne considère qu’un sous-ensemble aléatoire de variables (par exemple \(\sqrt{\text{nb\_features}}\)), ce qui l’oblige à tester aussi des colonnes moins évidentes (`restecg`, `exang`, `ca`, `thal`) au lieu de s’appuyer exclusivement sur les plus fortes (`cp`, `oldpeak`).  
+
+### C. Le Consensus (Vote)
+
+Lorsqu’un nouveau patient arrive :  
+
+- Chaque arbre décide “malade” ou “non malade” en fonction de ses propres règles.  
+- La forêt agrège ces avis par vote majoritaire (classification) ; les erreurs individuelles se compensent, tandis que le signal commun (les motifs cliniques robustes) domine la décision finale.  
+
+---
+
+## 7. Analyse Approfondie : Évaluation (L’Heure de Vérité)
+
+### A. La Matrice de Confusion
+
+Pour la classification “maladie cardiaque présente / absente”, la matrice de confusion se lit ainsi :  
+
+- **Vrais Positifs (TP)** : Prédit “malade” | Réel “malade”. Patients cardiaques correctement identifiés.  
+- **Vrais Négatifs (TN)** : Prédit “sain” | Réel “sain”. Pas de fausse alerte.  
+- **Faux Positifs (FP – Erreur de Type I)** : Prédit “malade” | Réel “sain”.  
+  - Impact : examens complémentaires inutiles, anxiété, surcoût, mais risque médical direct plus limité.  
+- **Faux Négatifs (FN – Erreur de Type II)** : Prédit “sain” | Réel “malade”.  
+  - Impact : risque majeur de retard diagnostique, d’infarctus ou de complications graves ; c’est le type d’erreur le plus critique à minimiser.  
+
+### B. Les Métriques Avancées
+
+Comme les classes peuvent être modérément déséquilibrées (répartition malades / non malades non parfaitement 50/50), l’**accuracy** seule peut être trompeuse.  
+
+On surveille donc en priorité :  
+
+1. **Précision (Precision)**  
+   \(\text{Precision} = \frac{TP}{TP + FP}\)  
+   Elle mesure la proportion de patients prédits “malades” qui le sont réellement ; une précision faible signifie trop de fausses alertes pour les cardiologues.  
+
+2. **Rappel (Recall / Sensibilité)**  
+   \(\text{Recall} = \frac{TP}{TP + FN}\)  
+   Elle indique la capacité du modèle à détecter réellement les patients cardiaques ; un rappel faible signifie qu’on laisse passer trop de malades non détectés, ce qui est médicalement inacceptable.  
+
+3. **F1-Score**  
+   Le F1-score est la moyenne harmonique entre Précision et Recall ; c’est une note unique utile pour comparer plusieurs modèles lorsque l’équilibre entre faux positifs et faux négatifs est important.  
+
+Dans le contexte de la maladie cardiaque, la priorité est généralement de **maximiser le Recall** (ne pas rater de patients malades), tout en gardant une précision raisonnable pour ne pas surcharger inutilement les examens et spécialistes.  
