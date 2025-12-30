@@ -4,32 +4,23 @@
 ![photo](photo.jpeg)
 ---
 ## SOMMAIRE
-## Sommaire
 
-1. Contexte métier et mission  
-   1.1 Problème (Business Case)  
-   1.2 Les données (Input)  
+- [1. Le Contexte Métier et la Mission](#1-le-contexte-métier-et-la-mission)
+  - [1.1 Le Problème (Business Case)](#le-problème-business-case)
+  - [1.2 Les Données (Linput)](#les-données-linput)
 
-2. Code Python (Laboratoire)  
-   2.1 Import et chargement du dataset Kaggle  
-   2.2 Pré-traitement et création de la cible  
-   2.3 Gestion des valeurs manquantes  
-   2.4 Encodage et standardisation  
-   2.5 Visualisations exploratoires (EDA)  
-   2.6 Split train / test  
-   2.7 Entraînement des modèles  
-   2.8 GridSearch et évaluation du Random Forest  
-   2.9 Courbe ROC – AUC  
+- [2. Le Code Python (Laboratoire)](#2-le-code-python-laboratoire)
 
-3. Analyse approfondie : Nettoyage (Data Wrangling)  
+- [3. Analyse Approfondie : Nettoyage (Data Wrangling)](#3-analyse-approfondie--nettoyage-data-wrangling)
 
-4. Analyse approfondie : Exploration (EDA)  
+- [4. Analyse Approfondie : Exploration (EDA)](#4-analyse-approfondie--exploration-eda)
 
-5. Analyse approfondie : Méthodologie (Split)  
+- [5. Analyse Approfondie : Méthodologie (Split)](#5-analyse-approfondie--méthodologie-split)
 
-6. Focus théorique : Algorithme Random Forest  
+- [6. Focus Théorique : Algorithme Random Forest](#6-focus-théorique--lalgorithme-random-forest-)
 
-7. Analyse approfondie : Évaluation (métriques et matrice de confusion)
+- [7. Analyse Approfondie : Évaluation](#7-analyse-approfondie--évaluation-lheure-de-vérité)
+
 
 
 ## 1. Le Contexte Métier et la Mission
