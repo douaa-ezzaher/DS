@@ -5,9 +5,9 @@
 ---
 ## SOMMAIRE
 
+## SOMMAIRE
+
 - [1. Le Contexte Métier et la Mission](#1-le-contexte-métier-et-la-mission)
-  - [1.1 Le Problème (Business Case)](#le-problème-business-case)
-  - [1.2 Les Données (Linput)](#les-données-linput)
 
 - [2. Le Code Python (Laboratoire)](#2-le-code-python-laboratoire)
 
@@ -19,9 +19,9 @@
 
 - [6. Focus Théorique : Algorithme Random Forest](#6-focus-théorique--lalgorithme-random-forest-)
 
-- [7. Analyse Approfondie : Évaluation](#7-analyse-approfondie--évaluation-lheure-de-vérité)
+- [7. Analyse Approfondie : Évaluation](#7-analyse-approfondie--évaluation)
 
-
+---
 
 ## 1. Le Contexte Métier et la Mission
 ### Le Problème (Business Case)
