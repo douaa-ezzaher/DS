@@ -273,133 +273,119 @@ plt.show()
 
 ## 3. Analyse Approfondie : Nettoyage (Data Wrangling)
 
-### Le Problème Mathématique du "Vide"
+### Problématique spécifique à notre projet
+Le dataset **Student Mental Health** provient d’un questionnaire réel rempli par des étudiants. Comme souvent avec ce type de données déclaratives, certaines réponses sont manquantes ou incohérentes, notamment sur l’âge ou les informations académiques.  
+Dans notre cas, les algorithmes de **Machine Learning** (régression logistique, KNN, Random Forest) nécessitent une matrice de données complète et exploitable, sans valeurs manquantes.
 
-Dans la base Heart Disease, certaines variables contiennent des valeurs manquantes (souvent encodées par `?`), notamment pour des colonnes comme `ca` ou `thal` dans certaines versions du dataset.  
-Les algorithmes de machine learning basés sur l’algèbre linéaire (régression, SVM, réseaux, calculs de distances) ne peuvent pas traiter ces `NaN` et échouent dès qu’une seule valeur manquante apparaît dans la matrice de features.  
+### Stratégie de nettoyage appliquée
+- **Suppression des doublons** : afin d’éviter que certains profils étudiants soient surreprésentés dans l’apprentissage.  
+- **Variable numérique (âge)** : imputation par la médiane, choix robuste face aux valeurs extrêmes.  
+- **Variables catégorielles (genre, filière, année d’étude, CGPA, statut marital)** : imputation par le mode, représentant la réponse la plus fréquente.  
 
-### La Mécanique de l’Imputation
-
-Une stratégie simple consiste à remplacer les valeurs manquantes par une statistique calculée sur la colonne (moyenne, médiane ou mode), par exemple via `SimpleImputer`.  
-
-1. **L’Apprentissage (`fit`) :**  
-   L’imputer parcourt une colonne numérique comme `trestbps` (pression artérielle au repos) ou `chol` (cholestérol sérique) et calcule une statistique, par exemple la moyenne \(\mu\) de tous les patients observés.  
-   Cette valeur (par exemple 132 mmHg pour `trestbps`) est mémorisée comme “valeur de remplacement” pour cette variable.  
-
-2. **La Transformation (`transform`) :**  
-   L’imputer repasse ensuite sur la colonne ; dès qu’il rencontre une valeur manquante, il la remplace par \(\mu\).  
-   On obtient alors une matrice sans trous, compatible avec les algorithmes de classification comme la régression logistique ou Random Forest.  
-
-### 💡 Le Coin de l’Expert (Data Leakage)
-
-Dans un script pédagogique, on nettoie souvent les données **avant** de faire le split Train/Test, ce qui est plus simple mais théoriquement imparfait.  
-En calculant la moyenne de `trestbps` ou `chol` sur tout le dataset, on utilise aussi les patients qui finiront dans le Test Set, ce qui introduit une **fuite d’information (Data Leakage)**.  
-
-- **Pourquoi c’est un problème ?**  
-  Les statistiques calculées sur tout le jeu de données incorporent des informations “du futur” (Test), ce qui peut rendre les performances du modèle trop optimistes.  
-
-- **Bonne pratique en production :**  
-  - Séparer d’abord en Train/Test.  
-  - Ajuster l’imputer (`fit`) uniquement sur le Train.  
-  - Appliquer ensuite cette imputation (`transform`) au Train **et** au Test avec les valeurs apprises sur le Train.  
+Cette approche permet de conserver la majorité des observations tout en limitant la distorsion statistique.
 
 ---
 
 ## 4. Analyse Approfondie : Exploration (EDA)
 
-C’est l’étape de profilage des patients et des variables cliniques du dataset Heart Disease.  
+L’analyse exploratoire vise à comprendre le profil des étudiants et la structure des variables avant la modélisation.
 
-### Décrypter `.describe()`
+### Analyse des distributions
+- **Âge** : la majorité des étudiants se situe dans une tranche d’âge jeune, ce qui est cohérent avec une population universitaire.  
+- **CGPA** : les catégories de performance académique sont hétérogènes, suggérant des profils d’étudiants variés.  
+- **Statut marital** : variable majoritairement dominée par les étudiants célibataires, mais conservée car potentiellement corrélée au bien‑être psychologique.  
 
-L’appel `df[["age","trestbps","chol","thalach","oldpeak"]].describe()` fournit des statistiques descriptives sur des variables clés comme l’âge, la tension au repos, le cholestérol, la fréquence cardiaque maximale atteinte et la dépression ST.  
-Comparer la **Mean** (moyenne) et le **50%** (médiane) permet de repérer les variables asymétriques : par exemple, un cholestérol moyen nettement plus élevé que la médiane indique une distribution tirée vers le haut par quelques hypercholestérolémies extrêmes.  
+### Apport de l’EDA au projet
+Cette étape permet de :
+- vérifier la cohérence globale des réponses,  
+- identifier d’éventuels déséquilibres,  
+- confirmer la pertinence des variables retenues pour la prédiction des troubles mentaux.  
 
-L’**écart-type (std)** renseigne sur la dispersion ; une variable avec `std` proche de 0 (quasi constante) apporte peu d’information discriminante au modèle et peut être candidate à la suppression ou à la mise de côté.  
-
-### La Multicollinéarité (Redondance Clinique)
-
-En examinant une matrice de corrélation, certaines variables apparaissent fortement corrélées, par exemple des combinaisons de paramètres de stress test comme `oldpeak` et `slope`, ou l’association entre certains marqueurs de risque (pression, cholestérol, fréquence cardiaque maximale).  
-Cette redondance est peu gênante pour des modèles d’arbres (Random Forest, Gradient Boosting), mais peut rendre une régression logistique instable, car le modèle peine à attribuer clairement le “poids” de la décision à l’une ou l’autre variable fortement corrélée.  
+Les visualisations confirment que les données sont exploitables et informatives pour un modèle de classification. 
 
 ---
 
 ## 5. Analyse Approfondie : Méthodologie (Split)
 
-### Le Concept : Garantie de Généralisation
+### 5.1 Pourquoi un protocole expérimental est indispensable
+En Machine Learning, de bonnes performances sur les données d’entraînement ne garantissent pas que le modèle fonctionnera correctement sur de nouveaux étudiants. Sans séparation des données, le modèle risquerait de mémoriser des profils spécifiques au lieu d’apprendre des règles générales reliant les facteurs académiques et démographiques à la santé mentale.  
+Le découpage **Train/Test** permet donc de simuler une situation réelle : prédire l’état de santé mentale d’un étudiant jamais observé auparavant.
 
-L’objectif n’est pas que le modèle mémorise la base Heart Disease, mais qu’il apprenne des règles générales valables pour de nouveaux patients jamais vus.  
-Le découpage en Train/Test permet de simuler ce futur : le Train sert à l’apprentissage, le Test sert uniquement à mesurer la capacité de généralisation du modèle sur des données “neuves”.  
+### 5.2 Choix du découpage
+Les choix méthodologiques suivants ont été retenus :
 
-### Les Paramètres sous le capot
+- **80 % Train / 20 % Test**  
+  Le jeu d’entraînement contient suffisamment d’observations pour apprendre des relations robustes entre les variables explicatives (âge, CGPA, genre, année d’étude, statut marital) et la variable cible *mentalissue*.  
+  Le jeu de test, quant à lui, permet une évaluation fiable et statistiquement pertinente.
 
-Avec `train_test_split(test_size=0.2, random_state=42, stratify=y)` :  
+- **random_state = 42**  
+  Ce paramètre garantit la reproductibilité des résultats. Toute relance du code produit le même découpage, condition essentielle dans un cadre académique.
 
-1. **Ratio 80/20 (principe de Pareto) :**  
-   Environ 80 % des patients sont utilisés pour apprendre les relations entre les variables (âge, type de douleur thoracique `cp`, cholestérol `chol`, fréquence cardiaque `thalach`, etc.) et la présence de maladie cardiaque, tandis que 20 % sont réservés pour l’évaluation finale.  
+- **Stratification sur la variable cible**  
+  La variable *mentalissue* pouvant être déséquilibrée, la stratification assure que la proportion d’étudiants à risque et non à risque est conservée dans les deux ensembles. Cela évite des évaluations biaisées dues au hasard.
 
-2. **Reproductibilité (`random_state`) :**  
-   Fixer `random_state=42` garantit que toute personne qui relance le notebook obtient exactement les mêmes patients en Train et Test, ce qui est indispensable pour comparer les résultats et valider un pipeline de manière scientifique.  
-
-3. **Stratification (`stratify=y`) :**  
-   La stratification conserve une proportion similaire de patients malades / non malades dans le Train et le Test, ce qui stabilise les métriques d’évaluation et évite des splits déséquilibrés par hasard.  
-
----
-
-## 6. FOCUS THÉORIQUE : L’Algorithme Random Forest 🌲
-
-Pourquoi Random Forest est-il un “couteau suisse” très apprécié pour la base Heart Disease ?  
-
-### A. La Faiblesse de l’Arbre Unique
-
-Un arbre de décision sur ce dataset peut construire des règles comme : “si `cp` = angine typique et `thalach` < 150 alors malade”, en enchaînant des seuils sur `age`, `chol`, `oldpeak`, etc.  
-Seul, il a tendance à surapprendre des cas particuliers (par exemple un jeune patient très atypique), ce qui se traduit par une **variance élevée** et des performances instables sur de nouveaux patients.  
-
-### B. La Force du Groupe (Bagging)
-
-Random Forest construit de nombreux arbres en introduisant de l’aléa contrôlé.  
-
-1. **Bootstrapping (échantillons patients) :**  
-   Chaque arbre est entraîné sur un sous-ensemble tiré avec remise du jeu d’entraînement : certains patients sont vus plusieurs fois par un arbre, d’autres pas du tout pour cet arbre.  
-   Chaque arbre développe ainsi sa propre “opinion clinique” basée sur une expérience légèrement différente.  
-
-2. **Aléa sur les features (feature randomness) :**  
-   À chaque split, l’arbre ne considère qu’un sous-ensemble aléatoire de variables (par exemple \(\sqrt{\text{nb\_features}}\)), ce qui l’oblige à tester aussi des colonnes moins évidentes (`restecg`, `exang`, `ca`, `thal`) au lieu de s’appuyer exclusivement sur les plus fortes (`cp`, `oldpeak`).  
-
-### C. Le Consensus (Vote)
-
-Lorsqu’un nouveau patient arrive :  
-
-- Chaque arbre décide “malade” ou “non malade” en fonction de ses propres règles.  
-- La forêt agrège ces avis par vote majoritaire (classification) ; les erreurs individuelles se compensent, tandis que le signal commun (les motifs cliniques robustes) domine la décision finale.  
+### 5.3 Impact sur l’évaluation
+Grâce à ce protocole, les métriques calculées sur le jeu de test reflètent la capacité réelle de généralisation du modèle et non une performance artificiellement optimiste.
 
 ---
 
-## 7. Analyse Approfondie : Évaluation (L’Heure de Vérité)
+## 6. Focus Théorique : Algorithme Random Forest 🌲
 
-### A. La Matrice de Confusion
+### 6.1 Pertinence de Random Forest pour ce projet
+Le problème étudié est une classification binaire basée sur des données hétérogènes issues d’un questionnaire. **Random Forest** est particulièrement adapté car :
+- il capture des relations non linéaires entre les facteurs académiques et la santé mentale,
+- il est robuste face au bruit et aux données imparfaites,
+- il gère efficacement les interactions complexes entre variables,
+- il offre de bonnes performances sans nécessiter d’hypothèses statistiques fortes.
 
-Pour la classification “maladie cardiaque présente / absente”, la matrice de confusion se lit ainsi :  
+### 6.2 Limites d’un arbre de décision unique
+Un arbre de décision seul peut apprendre des règles trop spécifiques aux données d’entraînement, par exemple :  
+> « Si CGPA faible et âge élevé alors étudiant à risque ».  
+Ce comportement mène au **sur-apprentissage (overfitting)**, réduisant fortement les performances sur de nouveaux étudiants.
 
-- **Vrais Positifs (TP)** : Prédit “malade” | Réel “malade”. Patients cardiaques correctement identifiés.  
-- **Vrais Négatifs (TN)** : Prédit “sain” | Réel “sain”. Pas de fausse alerte.  
-- **Faux Positifs (FP – Erreur de Type I)** : Prédit “malade” | Réel “sain”.  
-  - Impact : examens complémentaires inutiles, anxiété, surcoût, mais risque médical direct plus limité.  
-- **Faux Négatifs (FN – Erreur de Type II)** : Prédit “sain” | Réel “malade”.  
-  - Impact : risque majeur de retard diagnostique, d’infarctus ou de complications graves ; c’est le type d’erreur le plus critique à minimiser.  
+### 6.3 Principe de fonctionnement de Random Forest
+**Random Forest** repose sur l’agrégation de plusieurs arbres de décision indépendants :
 
-### B. Les Métriques Avancées
+- **Bootstrapping (diversité des étudiants)**  
+  Chaque arbre est entraîné sur un échantillon aléatoire du jeu d’entraînement. Certains profils étudiants sont vus plusieurs fois, d’autres pas du tout.
 
-Comme les classes peuvent être modérément déséquilibrées (répartition malades / non malades non parfaitement 50/50), l’**accuracy** seule peut être trompeuse.  
+- **Aléa sur les variables (diversité des facteurs)**  
+  À chaque séparation, l’arbre ne considère qu’un sous-ensemble aléatoire de variables (âge, CGPA, genre, etc.), ce qui empêche le modèle de se focaliser excessivement sur une seule variable dominante.
 
-On surveille donc en priorité :  
+- **Vote majoritaire**  
+  Chaque arbre émet une prédiction. La décision finale correspond au vote majoritaire, ce qui réduit la variance et améliore la stabilité globale du modèle.
 
-1. **Précision (Precision)**  
-   Elle mesure la proportion de patients prédits “malades” qui le sont réellement ; une précision faible signifie trop de fausses alertes pour les cardiologues.  
+### 6.4 Optimisation par GridSearch
+Une recherche par grille a été utilisée afin d’optimiser les hyperparamètres clés (**profondeur des arbres**, **nombre d’arbres**, **taille minimale des nœuds**). Cette étape permet d’améliorer la généralisation tout en limitant le sur-apprentissage.
 
-2. **Rappel (Recall / Sensibilité)**  
-   Elle indique la capacité du modèle à détecter réellement les patients cardiaques ; un rappel faible signifie qu’on laisse passer trop de malades non détectés, ce qui est médicalement inacceptable.  
+---
 
-3. **F1-Score**  
-   Le F1-score est la moyenne harmonique entre Précision et Recall ; c’est une note unique utile pour comparer plusieurs modèles lorsque l’équilibre entre faux positifs et faux négatifs est important.  
+## 7. Analyse Approfondie : Évaluation
 
-Dans le contexte de la maladie cardiaque, la priorité est généralement de **maximiser le Recall** (ne pas rater de patients malades), tout en gardant une précision raisonnable pour ne pas surcharger inutilement les examens et spécialistes.  
+### 7.1 Matrice de confusion
+La matrice de confusion permet d’analyser précisément les performances du modèle :
+
+- **Vrais Positifs (TP)** : étudiants réellement à risque correctement identifiés.  
+- **Vrais Négatifs (TN)** : étudiants sans trouble correctement reconnus.  
+- **Faux Positifs (FP)** : étudiants signalés à tort comme à risque.  
+- **Faux Négatifs (FN)** : étudiants en difficulté non détectés.  
+
+Dans le contexte de la santé mentale étudiante, les **Faux Négatifs** représentent l’erreur la plus critique.
+
+### 7.2 Analyse des métriques
+Plusieurs métriques sont utilisées :
+- **Accuracy** : donne une vue globale, mais peut être trompeuse si les classes sont déséquilibrées.  
+- **Precision** : mesure la fiabilité des alertes générées par le modèle.  
+- **Recall (sensibilité)** : mesure la capacité à détecter les étudiants réellement à risque. C’est la métrique prioritaire de ce projet.  
+- **F1-score** : compromis entre précision et rappel, utile pour comparer différents modèles.
+
+### 7.3 Courbe ROC et AUC
+La courbe **ROC** illustre le compromis entre le taux de vrais positifs et le taux de faux positifs selon le seuil de décision.  
+Une **AUC** élevée indique une bonne capacité du modèle à distinguer les étudiants à risque des autres.
+
+### 7.4 Interprétation globale
+Les résultats montrent que **Random Forest** est capable d’identifier efficacement les étudiants présentant des signes de troubles de santé mentale.  
+La priorité donnée au **Recall** permet de limiter le nombre d’étudiants en difficulté non détectés, ce qui est cohérent avec l’objectif de prévention du projet.  
+Cette stratégie peut entraîner une augmentation modérée des **Faux Positifs**, mais ce compromis est acceptable : il est préférable de proposer un soutien à un étudiant qui n’en aurait pas strictement besoin plutôt que de laisser un étudiant en détresse sans accompagnement.  
+
+Le modèle doit donc être considéré comme un **outil d’aide à la décision**, destiné à assister les services universitaires dans l’identification précoce des étudiants vulnérables, et non comme un **diagnostic médical automatisé**.
