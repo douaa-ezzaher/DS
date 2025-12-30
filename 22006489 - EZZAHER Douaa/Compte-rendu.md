@@ -48,6 +48,7 @@ Ce jeu de données provient d'un questionnaire Google Forms rempli par des étud
     * `0` = **À risque** (stress élevé, dépression, faible performance académique)
     * `1` = **Pas à risque** (santé mentale stable, bonnes performances) 
 
+---
 
 ## 2. Le Code Python (Laboratoire)
  
@@ -270,6 +271,7 @@ plt.title("Courbe ROC - Student Mental Health")
 plt.legend()
 plt.show()
 
+---
 
 ## 3. Analyse Approfondie : Nettoyage (Data Wrangling)
 
