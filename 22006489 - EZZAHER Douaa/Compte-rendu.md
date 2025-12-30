@@ -17,7 +17,7 @@
 
 - [5. Analyse Approfondie : Méthodologie (Split)](#5-analyse-approfondie--méthodologie-split)
 
-- [6. Focus Théorique : Algorithme Random Forest](#6-focus-théorique--lalgorithme-random-forest-)
+- [6. Focus Théorique : Algorithme Random Forest](#6-focus-théorique--lalgorithme-random-forest)
 
 - [7. Analyse Approfondie : Évaluation](#7-analyse-approfondie--évaluation)
 
@@ -331,7 +331,7 @@ Grâce à ce protocole, les métriques calculées sur le jeu de test reflètent 
 
 ---
 
-## 6. Focus Théorique : Algorithme Random Forest 
+## 6. Focus Théorique : Algorithme Random Forest
 
 ### 6.1 Pertinence de Random Forest pour ce projet
 Le problème étudié est une classification binaire basée sur des données hétérogènes issues d’un questionnaire. **Random Forest** est particulièrement adapté car :
