@@ -3,6 +3,35 @@
 ## EZZAHER Douaa - S7 - CAC G2
 ![photo](photo.jpeg)
 ---
+## SOMMAIRE
+## Sommaire
+
+1. Contexte métier et mission  
+   1.1 Problème (Business Case)  
+   1.2 Les données (Input)  
+
+2. Code Python (Laboratoire)  
+   2.1 Import et chargement du dataset Kaggle  
+   2.2 Pré-traitement et création de la cible  
+   2.3 Gestion des valeurs manquantes  
+   2.4 Encodage et standardisation  
+   2.5 Visualisations exploratoires (EDA)  
+   2.6 Split train / test  
+   2.7 Entraînement des modèles  
+   2.8 GridSearch et évaluation du Random Forest  
+   2.9 Courbe ROC – AUC  
+
+3. Analyse approfondie : Nettoyage (Data Wrangling)  
+
+4. Analyse approfondie : Exploration (EDA)  
+
+5. Analyse approfondie : Méthodologie (Split)  
+
+6. Focus théorique : Algorithme Random Forest  
+
+7. Analyse approfondie : Évaluation (métriques et matrice de confusion)
+
+
 ## 1. Le Contexte Métier et la Mission
 ### Le Problème (Business Case)
 Dans le domaine universitaire, la pression académique, les difficultés financières et l'isolement social peuvent fortement impacter la santé mentale des étudiants et, par ricochet, leurs performances académiques. 
