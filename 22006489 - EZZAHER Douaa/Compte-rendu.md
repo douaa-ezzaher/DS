@@ -1,6 +1,7 @@
 # PROJET DATA SCIENCE 
 ## Thème: Santé mentale des étudiants
 ## EZZAHER Douaa - S7 - CAC G2
+![photo](photo.jpeg)
 ---
 ## 1. Le Contexte Métier et la Mission
 ### Le Problème (Business Case)
