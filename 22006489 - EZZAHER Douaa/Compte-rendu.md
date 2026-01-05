@@ -5,7 +5,6 @@
 ---
 ## SOMMAIRE
 
-## SOMMAIRE
 
 - [1. Le Contexte Métier et la Mission](#1-le-contexte-métier-et-la-mission)
 
